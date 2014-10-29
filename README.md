@@ -1,4 +1,4 @@
 ravello
 =======
 
-Python script that create applications in Ravello.
+Python script that creates applications in Ravello.

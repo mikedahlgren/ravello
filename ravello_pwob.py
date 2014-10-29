@@ -44,7 +44,7 @@ def createRavelloApps(args, passwd):
 		app_name = "PWOB-Chi-Student" + str(c).zfill(3) 	
 		new_app=client.create_application({'name': app_name, 'description': 'Platform Without BoundariesLabs for Chicago', 'baseBlueprintId': 51839036})
 		client.set_application_expiration(new_app['id'], {'expirationFromNowSeconds' : '14400' })
-	#	client.publish_application(new_app['id'], {'optimizationLevel': 'COST_OPTIMIZED'})
+		client.publish_application(new_app['id'], {'optimizationLevel': 'COST_OPTIMIZED'})
 
 
 
