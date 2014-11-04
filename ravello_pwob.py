@@ -23,7 +23,8 @@ def findHostnames(args, passwd):
 
 	c=1
 	for single_app in apps:
-	   file_line = "Student " + str(c) + "," 
+#	   file_line = "Student " + str(c) + "," 
+	   file_line = single_app['name'] + "," 
 	   single_app = client.get_application(single_app['id'])
 	   for vm in single_app['deployment']['vms']:
 	      try: 
@@ -41,10 +42,10 @@ def createRavelloApps(args, passwd):
 	client = connectToRavello(args, passwd)
 
 	for c in range(1, args.count+1):
-		app_name = "PWOB-Chi-Student" + str(c).zfill(3) 	
-		new_app=client.create_application({'name': app_name, 'description': 'Platform Without BoundariesLabs for Chicago', 'baseBlueprintId': 51839036})
-		client.set_application_expiration(new_app['id'], {'expirationFromNowSeconds' : '14400' })
-		client.publish_application(new_app['id'], {'optimizationLevel': 'COST_OPTIMIZED'})
+		app_name = "pwob-" + args.location + "-" + str(c).zfill(3) 	
+		new_app=client.create_application({'name': app_name, 'description': 'Platform Without BoundariesLabs for ' + args.location, 'baseBlueprintId': 52101381})
+		client.set_application_expiration(new_app['id'], {'expirationFromNowSeconds' : '36000' })
+		client.publish_application(new_app['id'], {'optimizationLevel': 'PERFORMANCE_OPTIMIZED'})
 
 
 
@@ -56,6 +57,7 @@ if __name__ == '__main__':
 	parser.add_argument("-c", "--create", action="store_true", help="Create Ravello applications")
 	parser.add_argument("-q", "--query", action="store_true", help="Query VM Names for existing applications")	
 	parser.add_argument("-n", "--count", type=int, help="Number of Application Instances to create")
+	parser.add_argument("-l", "--location", type=str, help="Name of the Location for Ravello Service Naming")
 	args = parser.parse_args()
 
 	if args.user == None:
@@ -73,6 +75,9 @@ if __name__ == '__main__':
 	if args.create == True:
 		if args.count == None:
 			print "Error: Need the count of applications to create"
+			quit()
+		if args.location == None:
+			print "Error: Need to know location in order name the Ravello Services"
 			quit()
 		createRavelloApps(args, passwd)
 
