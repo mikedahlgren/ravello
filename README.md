@@ -7,7 +7,7 @@ Python script that creates applications in Ravello.
 Usage
 =======
 
-The script has to functions.   The first will create the lab environment and the second function will query the labs for the DNS names of the virtual machines.  Each of the functions will prompt for a user password after the command is run.
+The script has two functions.   The first will create the lab environment and the second function will query the labs for the DNS names of the virtual machines.  Each of the functions will prompt for a user password after the command is run.
 
 To create a lab environment you will need to run the script with the following command line options:
 
