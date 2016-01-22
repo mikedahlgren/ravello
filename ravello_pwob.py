@@ -15,15 +15,18 @@ def connectToRavello(args, passwd):
 
 
 def findHostnames(args, passwd):
+	print "Query"
+	print "Blueprint : " , args.blueprint
+
 	client = connectToRavello(args, passwd) 
 
-	apps = client.get_applications({"blueprintName" : args.blueprint})
+	apps = client.get_applications({'baseBlueprintId' : args.blueprint})
 
-	fp = open("pwob_labs.csv", "w")
+	fp = open("itwob_labs.csv", "w")
 
 	c=1
 	for single_app in apps:
-#	   file_line = "Student " + str(c) + "," 
+           print 'Found : ', single_app['name']
 	   file_line = single_app['name'] + "," 
 	   single_app = client.get_application(single_app['id'])
 	   for vm in single_app['deployment']['vms']:
@@ -41,43 +44,68 @@ def findHostnames(args, passwd):
 def createRavelloApps(args, passwd):
 	client = connectToRavello(args, passwd)
 
-	for c in range(1, args.count+1):
-		app_name = "pwob-" + args.location + "-" + str(c).zfill(3) 	
-		new_app=client.create_application({'name': app_name, 'description': 'Platform Without BoundariesLabs for ' + args.location, 'baseBlueprintId': 52527296})
-		client.set_application_expiration(new_app['id'], {'expirationFromNowSeconds' : '36000' })
-		client.publish_application(new_app['id'], {'optimizationLevel': 'PERFORMANCE_OPTIMIZED'})
+	print "Create"
+	print "Blueprint : " , args.blueprint
+	print "Location  : " , args.location
+	print "Auto Stop : " , args.time
+	print "Count     : " , args.count
+	print "Start     : " , args.start
+	print ""
 
+	for c in range(args.start, args.start + args.count):
+		app_name = "itwob-" + args.location + "-" + str(c).zfill(3) 	
+		print "Creating  : ", app_name
+		new_app=client.create_application({'name': app_name, 'description': 'IT Without BoundariesLabs for ' + args.location , 'baseBlueprintId': args.blueprint})
+		client.set_application_expiration(new_app['id'], {'expirationFromNowSeconds' : args.time })
+		client.publish_application(new_app['id'], {'optimizationLevel': 'PERFORMANCE_OPTIMIZED'})
+		print "Published : ", new_app['name']
+		print ""
 
 
 if __name__ == '__main__':
 	parser = argparse.ArgumentParser()
-	parser.add_argument("-b", "--blueprint", type=str, help="Ravello Blue Print to use")
-	parser.add_argument("-u", "--user", type=str, help="Ravello User")
-#	parser.add_argument("-a", "--app-name", type=str, help="Template of application name")
 	parser.add_argument("-c", "--create", action="store_true", help="Create Ravello applications")
 	parser.add_argument("-q", "--query", action="store_true", help="Query VM Names for existing applications")	
-	parser.add_argument("-n", "--count", type=int, help="Number of Application Instances to create")
-	parser.add_argument("-l", "--location", type=str, help="Name of the Location for Ravello Service Naming")
+	parser.add_argument("-n", "--count", type=int, help="Number of application instances to create")
+	parser.add_argument("-s", "--start", type=int, help="Start iterating app numbers from this number")
+	parser.add_argument("-l", "--location", type=str, help="Short unique name (location) for application naming")
+	parser.add_argument("-b", "--blueprint", type=int, help="Blueprint ID for create or query")
+	parser.add_argument("-u", "--user", type=str, help="Your Ravello username")
+	parser.add_argument("-t", "--time", type=int, help="How many hours before application auto-stop")
 	args = parser.parse_args()
 
 	if args.user == None:
-		print "Error: Please specify a Ravello user to use"
+		print "ERROR: --user not specified"
 		quit()
-	
+
+	if args.blueprint == None:
+		print "ERROR: --blueprint not specified"
+		quit()	
+
 	passwd = getpass.getpass("Ravello Password: ")
 
 	if args.query == True:
-		if args.blueprint == None:
-			print "Error: Please specifiy a Ravello Blueprint to use"
-			quit()	
 		findHostnames(args, passwd)
+		quit()
 
 	if args.create == True:
 		if args.count == None:
-			print "Error: Need the count of applications to create"
+			print "ERROR: --count not specified"
 			quit()
-		if args.location == None:
-			print "Error: Need to know location in order name the Ravello Services"
-			quit()
-		createRavelloApps(args, passwd)
 
+		if args.location == None:
+			print "ERROR: --location not specified"
+			quit()
+
+		if args.start == None:
+			print "WARN: --start not specified, assuming --start 1"
+			args.start = 1;
+
+		if args.time == None:
+			print "WARN: --time not specified, assuming --time 4"
+			args.time = 60 * 60 * 4
+		else:
+			args.time = 60 * 60 * args.time
+
+		createRavelloApps(args, passwd)
+		quit()
