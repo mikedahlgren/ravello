@@ -1,4 +1,6 @@
 #!/usr/bin/python
+#Forked from Ryan Hennessy
+#Modified by Mike Dahlgren
 from ravello_sdk import *
 import argparse
 import getpass
@@ -53,9 +55,9 @@ def createRavelloApps(args, passwd):
 	print ""
 
 	for c in range(args.start, args.start + args.count):
-		app_name = "itwob-" + args.location + "-" + str(c).zfill(3) 	
+		app_name = "cfworkshop-" + args.location + "-" + str(c).zfill(3) 	
 		print "Creating  : ", app_name
-		new_app=client.create_application({'name': app_name, 'description': 'IT Without BoundariesLabs for ' + args.location , 'baseBlueprintId': args.blueprint})
+		new_app=client.create_application({'name': app_name, 'description': 'CloudForm Workshop for ' + args.location , 'baseBlueprintId': args.blueprint})
 		client.set_application_expiration(new_app['id'], {'expirationFromNowSeconds' : args.time })
 		client.publish_application(new_app['id'], {'optimizationLevel': 'PERFORMANCE_OPTIMIZED'})
 		print "Published : ", new_app['name']
