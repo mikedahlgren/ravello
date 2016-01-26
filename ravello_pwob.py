@@ -55,7 +55,7 @@ def createRavelloApps(args, passwd):
 	print ""
 
 	for c in range(args.start, args.start + args.count):
-		app_name = "cfworkshop-" + args.location + "-" + str(c).zfill(3) 	
+		app_name = "CloudForms-Workshop-" + args.location + "-" + str(c).zfill(3) 	
 		print "Creating  : ", app_name
 		new_app=client.create_application({'name': app_name, 'description': 'CloudForm Workshop for ' + args.location , 'baseBlueprintId': args.blueprint})
 		client.set_application_expiration(new_app['id'], {'expirationFromNowSeconds' : args.time })
